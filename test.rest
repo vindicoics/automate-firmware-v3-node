@@ -1,0 +1,28 @@
+### TURN ON RELAY 1 WITH VALUE 1
+GET http://192.168.68.123:3000/write/1/1
+
+
+### TURN OFF RELAY 1 WITH VALUE 0
+GET http://192.168.68.123:3000/write/1/0
+
+### TURN ON ALL RELAYS
+GET http://192.168.68.123:3000/write/all/1
+
+### TURN OFF ALL RELAYS
+GET http://192.168.68.123:3000/write/all/0
+
+
+### READ RELAY 1
+GET http://192.168.68.123:3000/read/1/
+
+### TEST
+GET http://192.168.68.123:3000/test
+
+### LOAD
+GET http://192.168.68.123:3000/load
+
+### USAGE
+GET http://192.168.68.123:3000/usage
+
+### RELAY
+GET http://192.168.68.123:3000/relay
