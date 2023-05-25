@@ -1,14 +1,29 @@
 version: "3.9"
 
 services:
+  redis:
+    image: redis/redis-stack-server:latest
+    volumes:
+      - ./data:/var/lib/redis-stack
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - "6379:6379"
+    command: redis-stack-server /usr/local/etc/redis/redis.conf
   automate-node:
-    build: .
-    image: automate-node:latest
-    devices:  
-      - "/dev/i2c-1:/dev/i2c-1"
-      - "/dev/ttyAMA0:/dev/ttyAMA0"
+    # build: .
+    image: vindico/automate-node:latest
+    # devices:  
+    #   - "/dev/i2c-1:/dev/i2c-1"
+    #   - "/dev/ttyAMA0:/dev/ttyAMA0"
     ports:
       - "3000:3000"
-    volumes:
-      - .:/app
-    restart: unless-stopped
+    links:
+      - redis
+    # restart: unless-stopped
+    # volumes:
+    #   - .:/app
+    environment:
+      - NODE_ENV=production
+      - WEB_PORT=8085
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379

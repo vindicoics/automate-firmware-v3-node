@@ -14,6 +14,8 @@ COPY ["package.json", "package-lock.json*", "./"]
 
 COPY 8mosind-rpi /app/8mosind-rpi
 
+COPY public /app/public
+
 WORKDIR /app/8mosind-rpi
 RUN make install
 

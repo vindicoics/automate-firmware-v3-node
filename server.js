@@ -1,6 +1,10 @@
+const dotenv = require('dotenv');
+dotenv.config({ path: `.env.${process.env.NODE_ENV}`});
+console.log('Environment: ' + process.env.NODE_ENV);
+
 const { exec } = require("child_process");
-const { SerialPort } = require('serialport');
-const { ReadlineParser } = require('@serialport/parser-readline')
+// const { SerialPort } = require('serialport');
+// const { ReadlineParser } = require('@serialport/parser-readline')
 const dayjs = require('dayjs');
 const express = require("express");
 const app = express();
@@ -14,15 +18,35 @@ global.dayjs = dayjs;
 console.log('global.approute ' + global.approute);
 
 const redis = require(`${global.approute}/functions/redis.js`)
+// const redis = require(`${global.approute}/functions/redis.js`).connect();
 
+console.log('v 1.2')
 
+app.use(cors());
+console.log('use cors')
+const apppath = __dirname + '/public/';
+app.use(express.static(apppath));
+
+(async () => {
+		try {
+		let client = await redis.connect();
+		global.redisClient = client;
+		await redis.createHash("test", { "name": "Ryan" });		
+	}
+	catch (error) {
+		console.error('an error occured')
+	}
+})()
+
+/*
 const port = new SerialPort({
 	path: '/dev/ttyAMA0',
 	baudRate: 38400,
 	//parser: new Readline({ delimiter: '\r\n' }),
   });
+*/
 
-
+/*
 (async() => {
 	try {
 		let client = await redis.connect();
@@ -115,16 +139,12 @@ const port = new SerialPort({
 		console.error(error);
 	}
 })();
+*/
 
-// const redis = require(`${global.approute}/functions/redis.js`).connect();
-
-console.log('v 1.2')
-
-app.use(cors());
-console.log('use cors')
 
 app.get("/", (req, res) => {
-	res.send("Hello, World!");
+	console.log(apppath)
+    res.sendFile(apppath + 'index.html', { root: __dirname })
 });
 
 app.get("/write/:channel/:value", (req, res) => {
