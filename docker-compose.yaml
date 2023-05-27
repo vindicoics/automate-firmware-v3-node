@@ -12,9 +12,9 @@ services:
   automate-node:
     # build: .
     image: vindico/automate-node:latest
-    # devices:  
-    #   - "/dev/i2c-1:/dev/i2c-1"
-    #   - "/dev/ttyAMA0:/dev/ttyAMA0"
+    devices:  
+      - "/dev/i2c-1:/dev/i2c-1"
+      - "/dev/ttyAMA0:/dev/ttyAMA0"
     ports:
       - "3000:3000"
     links:

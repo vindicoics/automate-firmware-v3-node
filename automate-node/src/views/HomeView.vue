@@ -111,25 +111,25 @@ export default {
   }),
   methods: {
     async getLoad() {
-      let loadResult = await this.axios.get('http://localhost:3000/load')
+      let loadResult = await this.axios.get('/load')
       this.load = loadResult.data.data
     },
     async getUsage() {
-      let usageResult = await this.axios.get('http://localhost:3000/usage')
+      let usageResult = await this.axios.get('/usage')
       this.usage = usageResult.data.data
     },
 
     toggleRelay(relay) {
       this.relays[relay] = !this.relays[relay]
       let value = this.relays[relay] ? 1 : 0
-      this.axios.get(`http://localhost:3000/write/${relay}/${value}`)
+      this.axios.get(`/write/${relay}/${value}`)
     },
     toggleAllRelays() {
       this.allRelays = !this.allRelays
       for (let i = 1; i <= 7; i++) {
         this.relays[i] = this.allRelays
       }
-      this.axios.get(`http://localhost:3000/write/all/${this.allRelays ? 1 : 0}`)
+      this.axios.get(`/write/all/${this.allRelays ? 1 : 0}`)
     }
   },
   created() {

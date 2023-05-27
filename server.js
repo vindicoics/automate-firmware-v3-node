@@ -3,8 +3,8 @@ dotenv.config({ path: `.env.${process.env.NODE_ENV}`});
 console.log('Environment: ' + process.env.NODE_ENV);
 
 const { exec } = require("child_process");
-// const { SerialPort } = require('serialport');
-// const { ReadlineParser } = require('@serialport/parser-readline')
+const { SerialPort } = require('serialport');
+const { ReadlineParser } = require('@serialport/parser-readline')
 const dayjs = require('dayjs');
 const express = require("express");
 const app = express();
@@ -27,26 +27,24 @@ console.log('use cors')
 const apppath = __dirname + '/public/';
 app.use(express.static(apppath));
 
-(async () => {
-		try {
-		let client = await redis.connect();
-		global.redisClient = client;
-		await redis.createHash("test", { "name": "Ryan" });		
-	}
-	catch (error) {
-		console.error('an error occured')
-	}
-})()
+// (async () => {
+// 		try {
+// 		let client = await redis.connect();
+// 		global.redisClient = client;
+// 		await redis.createHash("test", { "name": "Ryan" });		
+// 	}
+// 	catch (error) {
+// 		console.error('an error occured')
+// 	}
+// })()
 
-/*
 const port = new SerialPort({
 	path: '/dev/ttyAMA0',
 	baudRate: 38400,
 	//parser: new Readline({ delimiter: '\r\n' }),
   });
-*/
 
-/*
+
 (async() => {
 	try {
 		let client = await redis.connect();
@@ -139,7 +137,7 @@ const port = new SerialPort({
 		console.error(error);
 	}
 })();
-*/
+
 
 
 app.get("/", (req, res) => {
