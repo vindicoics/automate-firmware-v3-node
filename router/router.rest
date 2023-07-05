@@ -1,0 +1,8 @@
+### Get Loads
+http://localhost:8085/api/v1/load
+
+### Get Usage
+http://localhost:8085/api/v1/usage
+
+### Get Relays
+http://localhost:8085/api/v1/relay

@@ -1,0 +1,1 @@
+docker push vindico/automate-node:latest
