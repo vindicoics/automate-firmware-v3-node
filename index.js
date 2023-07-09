@@ -36,59 +36,96 @@ app.use('/api/v1/', router);
 
 // Add Helper Libraries
 const datetime = require(`${global.approute}/lib/datetime`);
-
-// Get IP and Serial Number of device
-if (process.env.NODE_ENV === 'production') {
-	// Get Docker Host IP
-	const dockerHostIp = require('docker-host-ip');
-	global.ip = dockerHostIp();
-	var rsn = require('raspi-serial-number');
-	global.nodeId = rsn.getSerialNumber;
-} else {
-	// Get Local IP
-	const ip = require('ip4');
-	global.ip = ip
-	global.nodeId = "1000000000999999";
-}
-// Set Status
-let status = {
-	ENVIRONMENT: process.env.NODE_ENV,
-	NAME: package.name,
-	VERSION: package.version,
-	WEB_PORT: process.env.WEB_PORT,
-	REDIS_HOST: process.env.REDIS_HOST,
-	REDIS_PORT: process.env.REDIS_PORT,
-	MOSQUITO_HOST: process.env.MOSQUITTO_HOST,
-	MOSQUITTO_PORT: process.env.MOSQUITTO_PORT,
-	IP_ADDRESS: global.ip,
-	NODE_ID: global.nodeId
-}
 app.get('/status', (req, res) => res.status(200).json(status));
+
+let status = {}
 
 const startup = async () => {
     try {
-		// // Connect to Redis
+		// Get IP and Serial Number of device
+		if (process.env.NODE_ENV === 'production') {
+			const ip = require('ip4');
+			global.ip = ip
+			const hostIp = process.env.HOST_IP
+			console.log(`Host IP: ${hostIp}`);
+
+			// Get Docker Host IP
+			// const dockerHostIp = require('docker-host-ip');
+			// dockerHostIp( (error, result) => {
+			// 	if (error) {
+			// 		console.error(error);
+			// 	} else {
+			// 		global.ip = result;
+			// 	}
+			// });
+			var rsn = require('raspi-serial-number');
+			global.nodeId = await rsn.getSerialNumber();
+		} else if (process.env.NODE_ENV === 'staging') {
+			// Get Local IP
+			const ip = require('ip4');
+			global.ip = ip
+			var rsn = require('raspi-serial-number');
+			global.nodeId = await rsn.getSerialNumber();
+		} else {
+			// Get Local IP
+			const ip = require('ip4');
+			global.ip = ip
+			global.nodeId = "1000000000999999";
+		}
+		// Set Status
+		status = {
+			ENVIRONMENT: process.env.NODE_ENV,
+			NAME: package.name,
+			VERSION: package.version,
+			WEB_PORT: process.env.WEB_PORT,
+			REDIS_HOST: process.env.REDIS_HOST,
+			REDIS_PORT: process.env.REDIS_PORT,
+			MOSQUITO_HOST: process.env.MOSQUITTO_HOST,
+			MOSQUITTO_PORT: process.env.MOSQUITTO_PORT,
+			IP_ADDRESS: global.ip,
+			NODE_ID: global.nodeId
+		}
+	} catch (err) {
+        console.error(err);
+    }
+	try {
+		// Connect to Redis
 		let redisClient = await redisConnect.connect();
 		global.redisClient = redisClient;
 		await require(global.approute + '/setup.js')
-		// // Connect to Mosquitto
+	}
+	catch (error) {
+		console.error(error)
+	}
+	try {
+		// Connect to Mosquitto
 		const mqttClient = await mosquittoConnect.connect();		
 		global.mqttClient = mqttClient;
-		// // Subscribe to Topics
+		// Subscribe to Topics
 		let subscribeResult = await mosquittoConnect.subscribe('node/#');
 		console.log(subscribeResult.message)
-		// // Launch MQTT client
-		// require(global.approute + '/mqtt/index.js')
-		// Launch Meter
-		require(global.approute + '/meter.js');
-		// Launch Relay
-		require(global.approute + '/relay.js');
 		// Launch MQTT client
 		require(global.approute + '/mqtt/index.js')
-        app.emit('ready');
-    } catch (err) {
-        console.error(err);
-    }
+	}
+	catch (error) {
+		console.error(error)
+	}
+	try {
+		// Launch Meter
+		require(global.approute + '/meter.js');
+	}
+	catch (error) {
+		console.error(error)
+	}
+	try {
+		// Launch Relay
+		require(global.approute + '/relay.js');
+	}
+	catch (error) {
+		console.error(error)
+	}
+	app.emit('ready');
+   
 }
 
 const sendHeartbeat = () => {
@@ -97,7 +134,7 @@ const sendHeartbeat = () => {
 		ipAddress: global.ip,
 		timestamp: datetime.formatDateTimeNow('valueOf'),
 	}
-	mosquittoConnect.publish('node/' + global.nodeId + '/heartbeat', heartbeat);
+	// mosquittoConnect.publish('node/' + global.nodeId + '/heartbeat', heartbeat);
 }
 
 

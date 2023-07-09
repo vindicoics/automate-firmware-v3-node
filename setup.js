@@ -1,8 +1,21 @@
 const redisJSON = require(`${global.approute}/lib/redis-json`);
+const redisConnect = require(`${global.approute}/lib/redis-connect`);
 const datetime = require(`${global.approute}/lib/datetime/index.js`);
 
 console.log('Setup Started');
 (async () => {
+	// Create mqttService string
+	let mqttServiceExistsResult = await redisConnect.exists('mqttService');
+	if (mqttServiceExistsResult.data == 0) {
+		process.stdout.write('Creating mqttService String...');
+		try {
+			await redisConnect.createString('mqttService', '1');
+			process.stdout.write('SUCCESS\n');
+		} catch (error) {
+			process.stdout.write('ERROR\n');
+			console.error(error)
+		}
+	}
 	// Check if Relay JSON exists
 	let relayExists = await redisJSON.exists('latestRelay');
 	if (relayExists.data === 0) {

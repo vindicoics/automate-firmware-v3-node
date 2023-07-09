@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const redisJSON = require(`${global.approute}/lib/redis-json`);
+const redisConnect = require(`${global.approute}/lib/redis-connect`);
 const datetime = require(`${global.approute}/lib/datetime`);
 const relay = require(`${global.approute}/relay.js`);
 function delay(ms) {
@@ -55,6 +56,16 @@ router.get("/load/", async (req, res) => {
 router.get("/usage/", async (req, res) => {
 	try {
 		let readResult = await redisJSON.read('latestUsage');
+		return res.status(200).json({ success: true, data: readResult });
+	}
+	catch (error) {
+		return res.status(500).json({ success: false, error: error });
+	}
+});
+
+router.get("/mqttservice/", async (req, res) => {
+	try {
+		let readResult = await redisConnect.readString('mqttService');
 		return res.status(200).json({ success: true, data: readResult });
 	}
 	catch (error) {

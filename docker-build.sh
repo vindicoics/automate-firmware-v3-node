@@ -1,1 +1,1 @@
-docker build -t vindico/automate-node .
+sudo docker build -t vindico/automate-node .

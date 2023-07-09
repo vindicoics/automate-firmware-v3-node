@@ -20,7 +20,7 @@ const mosquittoConnect = require(global.approute + '/lib/mosquitto-connect/index
 
 		// TODO - Should we be getting this from database so it increments every time
 
-		if (process.env.NODE_ENV === 'production') {
+		if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging') {
 			// Connect to Serial Port
 			const port = new SerialPort({
 				path: '/dev/ttyAMA0',
@@ -166,7 +166,7 @@ const mosquittoConnect = require(global.approute + '/lib/mosquitto-connect/index
 	}
 })();
 
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging') {
 	process.on('SIGINT', function () {
   		port.close(function () {
     		console.log('Serial port closed');

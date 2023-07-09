@@ -1,7 +1,6 @@
 <template>
   <div class="bg-grey-lighten-2 full-width pa-10">
     <v-img :src="logo" width="250" />
-
     <div style="display: grid; grid-template-columns: repeat(auto-fill, 600px); grid-gap: 20px">
       <div class="bg-white rounded-lg pa-5" v-for="index in 7" :key="index">
         <div class="" style="display: grid; grid-template-columns: 1fr 1fr 1fr; grid-gap: 5px">
@@ -111,30 +110,34 @@ export default {
   }),
   methods: {
     async getLoad() {
-      let loadResult = await this.axios.get('/load')
-      this.load = loadResult.data.data
+      let loadResult = await this.axios.get('http://192.168.88.100:8085/api/v1/load')
+      this.load = loadResult.data.data.data
     },
     async getUsage() {
-      let usageResult = await this.axios.get('/usage')
-      this.usage = usageResult.data.data
+      let usageResult = await this.axios.get('http://192.168.88.100:8085/api/v1/usage')
+      this.usage = usageResult.data.data.data
     },
-
+	async getAutomation() {
+		let automationResult = await this.axios.get('http://192.168.88.100:8085/api/v1/mqttservice');
+		console.log('automationResult = ', automationResult)
+	},
     toggleRelay(relay) {
       this.relays[relay] = !this.relays[relay]
       let value = this.relays[relay] ? 1 : 0
-      this.axios.get(`/write/${relay}/${value}`)
+      this.axios.get(`http://192.168.88.100:8085/api/v1/write/${relay}/${value}`)
     },
     toggleAllRelays() {
       this.allRelays = !this.allRelays
       for (let i = 1; i <= 7; i++) {
         this.relays[i] = this.allRelays
       }
-      this.axios.get(`/write/all/${this.allRelays ? 1 : 0}`)
+      this.axios.get(`http://192.168.88.100:8085/api/v1/write/all/${this.allRelays ? 1 : 0}`)
     }
   },
   created() {
-    this.getLoad()
-	this.getUsage()
+    this.getLoad();
+	this.getUsage();
+	this.getAutomation();
     setInterval(() => {
       this.getLoad()
 	  this.getUsage()

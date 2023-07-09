@@ -9,21 +9,27 @@ services:
     ports:
       - "6379:6379"
     command: redis-stack-server /usr/local/etc/redis/redis.conf
+    restart: always
   automate-node:
-    # build: .
     image: vindico/automate-node:latest
     devices:  
       - "/dev/i2c-1:/dev/i2c-1"
       - "/dev/ttyAMA0:/dev/ttyAMA0"
     ports:
-      - "3000:3000"
+      - "8085:8085"
+    depends_on:
+      - redis
     links:
       - redis
-    # restart: unless-stopped
-    # volumes:
-    #   - .:/app
+    restart: always
     environment:
       - NODE_ENV=production
       - WEB_PORT=8085
-      - REDIS_HOST=redis
+      - REDIS_HOST=redis://redis
       - REDIS_PORT=6379
+      - HOST_IP=${HOST_IP}
+      - MOSQUITTO_HOST=mqtt://192.168.88.101
+      - MOSQUITTO_PORT=1883
+      - MOSQUITTO_USERNAME=
+      - MOSQUITTO_PASSWORD=
+      - MOSQUITTO_AUTH=false

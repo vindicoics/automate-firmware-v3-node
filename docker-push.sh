@@ -1,1 +1,1 @@
-docker push vindico/automate-node:latest
+sudo docker push vindico/automate-node:latest
