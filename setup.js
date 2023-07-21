@@ -40,6 +40,31 @@ console.log('Setup Started');
 		}			
 	}
 	// Check if load JSON exists
+	let powerSumExists = await redisJSON.exists('latestPowerSum');
+	if (powerSumExists.data === 0) {
+		process.stdout.write('Creating latestPowerSum...');
+		try {
+			// Create Blank Load JSON
+			let powerSum = {
+				S1: 0,
+				S2: 0,
+				S3: 0,
+				S4: 0,
+				S5: 0,
+				S6: 0,
+				S7: 0,
+				total: 0,
+				unit: 'W',
+				timestamp: datetime.formatDateTimeNow('valueOf')
+			}
+			redisJSON.create('latestPowerSum', powerSum);
+			process.stdout.write('SUCCESS\n');
+		} catch (error) {
+			process.stdout.write('ERROR\n');
+			console.error(error)
+		}			
+	}
+	// Check if load JSON exists
 	let loadExists = await redisJSON.exists('latestLoad');
 	if (loadExists.data === 0) {
 		process.stdout.write('Creating latestLoad...');

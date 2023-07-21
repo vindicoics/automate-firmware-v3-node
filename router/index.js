@@ -8,7 +8,7 @@ function delay(ms) {
 }
 
 router.get("/", (req, res) => {
-	console.log(apppath)
+	console.log('apppath = ' + apppath)
     res.sendFile(apppath + 'index.html', { root: __dirname })
 });
 
@@ -57,6 +57,51 @@ router.get("/usage/", async (req, res) => {
 	try {
 		let readResult = await redisJSON.read('latestUsage');
 		return res.status(200).json({ success: true, data: readResult });
+	}
+	catch (error) {
+		return res.status(500).json({ success: false, error: error });
+	}
+});
+
+// reset flag
+router.post("/reset/", async (req, res) => {
+	try {
+		await redisConnect.createString('reset', '1');
+		return res.status(200).json({ success: true });
+	}
+	catch (error) {
+		return res.status(500).json({ success: false, error: error });
+	}
+});
+
+// update usage
+router.post("/usage/", async (req, res) => {
+	try {
+		let usage = req.body;
+		await redisJSON.update('latestUsage', usage);
+		return res.status(200).json({ success: true, data: usage });
+	}
+	catch (error) {
+		return res.status(500).json({ success: false, error: error });
+	}
+});
+// update powerSum
+router.post("/powersum/", async (req, res) => {
+	try {
+		let powersum = req.body;
+		await redisJSON.update('latestPowerSum', powersum);
+		return res.status(200).json({ success: true, data: powersum });
+	}
+	catch (error) {
+		return res.status(500).json({ success: false, error: error });
+	}
+});
+// update load
+router.post("/load/", async (req, res) => {
+	try {
+		let load = req.body;
+		await redisJSON.update('latestLoad', load);
+		return res.status(200).json({ success: true, data: load });
 	}
 	catch (error) {
 		return res.status(500).json({ success: false, error: error });
