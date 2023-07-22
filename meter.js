@@ -25,7 +25,6 @@ const mosquittoConnect = require(global.approute + '/lib/mosquitto-connect/index
 			powerSum7 = latestPowerSum.S7;
 		} else {
 			powerSum1 = 0;
-			powerSum1 = 0;
 			powerSum2 = 0;
 			powerSum3 = 0;
 			powerSum4 = 0;

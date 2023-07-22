@@ -41,7 +41,7 @@
 					:icon="relays[index] ? 'mdi-check-circle' : 'mdi-minus-circle'"
 					class="mr-2 text-h5"
 					></v-icon> -->
-					Switch {{ relays[index] ? 'Off':'On' }}
+					Switch {{ relays[index] ? 'Off':'On' }} - S{{ index }}
 				</v-btn>
 			</div>
 		</div>
@@ -138,67 +138,67 @@ export default {
   },
   methods: {
     async getLoad() {
-      let loadResult = await this.axios.get('http://192.168.88.100:8085/api/v1/load')
+      let loadResult = await this.axios.get('/api/v1/load')
       this.load = loadResult.data.data.data
     },
     async getUsage() {
-      let usageResult = await this.axios.get('http://192.168.88.100:8085/api/v1/usage')
+      let usageResult = await this.axios.get('/api/v1/usage')
       this.usage = usageResult.data.data.data
     },
 	async getAutomation() {
-		let automationResult = await this.axios.get('http://192.168.88.100:8085/api/v1/mqttservice');
+		let automationResult = await this.axios.get('/api/v1/mqttservice');
 		console.log('automationResult = ', automationResult)
 	},
     toggleRelay(relay) {
       this.relays[relay] = !this.relays[relay]
       let value = this.relays[relay] ? 0 : 1
-      this.axios.get(`http://192.168.88.100:8085/api/v1/write/${relay}/${value}`)
+      this.axios.get(`/api/v1/write/${relay}/${value}`)
     },
     toggleAllRelays() {
       this.allRelays = !this.allRelays
       for (let i = 1; i <= 7; i++) {
         this.relays[i] = this.allRelays
       }
-      this.axios.get(`http://192.168.88.100:8085/api/v1/write/all/${this.allRelays ? 0 : 1}`)
+      this.axios.get(`/api/v1/write/all/${this.allRelays ? 0 : 1}`)
     },
 	async getRelayState() {
-		let relay1 = await this.axios.get('http://192.168.88.100:8085/api/v1/read/1');
+		let relay1 = await this.axios.get('/api/v1/read/1');
 		if (relay1.data.data == 'off') {
 			this.relays[1] = true;
 		} else {
 			this.relays[1] = false;
 		}
-		let relay2 = await this.axios.get('http://192.168.88.100:8085/api/v1/read/2');
+		let relay2 = await this.axios.get('/api/v1/read/2');
 		if (relay2.data.data == 'off') {
 			this.relays[2] = true;
 		} else {
 			this.relays[2] = false;
 		}
-		let relay3 = await this.axios.get('http://192.168.88.100:8085/api/v1/read/3');
+		let relay3 = await this.axios.get('/api/v1/read/3');
 		if (relay3.data.data == 'off') {
 			this.relays[3] = true;
 		} else {
 			this.relays[3] = false;
 		}
-		let relay4 = await this.axios.get('http://192.168.88.100:8085/api/v1/read/4');
+		let relay4 = await this.axios.get('/api/v1/read/4');
 		if (relay4.data.data == 'off') {
 			this.relays[4] = true;
 		} else {
 			this.relays[4] = false;
 		}
-		let relay5 = await this.axios.get('http://192.168.88.100:8085/api/v1/read/5');
+		let relay5 = await this.axios.get('/api/v1/read/5');
 		if (relay5.data.data == 'off') {
 			this.relays[5] = true;
 		} else {
 			this.relays[5] = false;
 		}
-		let relay6 = await this.axios.get('http://192.168.88.100:8085/api/v1/read/6');
+		let relay6 = await this.axios.get('/api/v1/read/6');
 		if (relay6.data.data == 'off') {
 			this.relays[6] = true;
 		} else {
 			this.relays[6] = false;
 		}
-		let relay7 = await this.axios.get('http://192.168.88.100:8085/api/v1/read/7');
+		let relay7 = await this.axios.get('/api/v1/read/7');
 		if (relay7.data.data == 'off') {
 			this.relays[7] = true;
 		} else {
@@ -244,10 +244,10 @@ export default {
 					timestamp: this.dayjs().valueOf()
 		}
 		// console.log('usage = ', JSON.stringify(usage, null, 2))	
-		await this.axios.post('http://192.168.88.100:8085/api/v1/usage', usage);
-		await this.axios.post('http://192.168.88.100:8085/api/v1/powersum', powerSum);
-		await this.axios.post('http://192.168.88.100:8085/api/v1/load', load);
-		await this.axios.post('http://192.168.88.100:8085/api/v1/reset');
+		await this.axios.post('/api/v1/usage', usage);
+		await this.axios.post('/api/v1/powersum', powerSum);
+		await this.axios.post('/api/v1/load', load);
+		await this.axios.post('/api/v1/reset');
 		// console.log('resetResult = ', resetResult)
 	}
   },
