@@ -24,6 +24,7 @@ const mosquittoConnect = require(global.approute + '/lib/mosquitto-connect/index
 
 // Redis Client
 const redisConnect = require(global.approute + '/lib/redis-connect/index.js');
+const redisJSON = require(global.approute + '/lib/redis-json/index.js');
 
 // Add Middleware
 const bodyParser = require('body-parser');
@@ -37,6 +38,9 @@ app.use('/api/v1/', router);
 // Add Helper Libraries
 const datetime = require(`${global.approute}/lib/datetime`);
 app.get('/status', (req, res) => res.status(200).json(status));
+
+// Add File System
+const fs = require('fs');
 
 let status = {}
 
@@ -128,20 +132,44 @@ const startup = async () => {
    
 }
 
-const sendHeartbeat = () => {
-	let heartbeat = {
-		version: package.version,
-		ipAddress: global.ip,
-		timestamp: datetime.formatDateTimeNow('valueOf'),
-	}
-	// mosquittoConnect.publish('node/' + global.nodeId + '/heartbeat', heartbeat);
-}
+const sendHeartbeat = async () => {
+	const namedPipeInPath = '/hostin';
+	const namedPipeOutPath = '/hostout';
+	const commandToSend = ' python /home/pi/automate-node/system-info.py ';
 
+	// Sending data to the named pipe '/home/pi/hostin'
+	const writableStream = await fs.createWriteStream(namedPipeInPath);
+	writableStream.write(commandToSend, (err) => {
+	  if (err) {
+	    console.error('Error writing to the named pipe:', err);
+	  }
+	  writableStream.end();
+	});
+
+	// Listening for data from the named pipe '/home/pi/hostout'
+	const readableStream = await fs.createReadStream(namedPipeOutPath);
+	readableStream.on('data', async (data) => {
+		let heartbeat = {
+			version: package.version,
+			ipAddress: global.ip,
+			...JSON.parse(data.toString()),
+			timestamp: datetime.formatDateTimeNow('valueOf'),
+		}
+		// console.log(heartbeat);
+		await redisJSON.update('systemInfo', heartbeat);
+		await mosquittoConnect.publish('node/' + global.nodeId + '/heartbeat', heartbeat);
+	});
+	readableStream.on('error', (err) => {
+	  console.error('Error reading from the named pipe:', err);
+	});
+}
+ 
 
 app.on('ready', () => {
     // Start the server only when the app is ready
     app.listen(port, () => {
 		console.log(status)
+		console.log('Ready')
     });
 	// Send Regular Heartbeat
 	sendHeartbeat();	

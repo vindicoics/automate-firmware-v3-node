@@ -63,6 +63,16 @@ router.get("/usage/", async (req, res) => {
 	}
 });
 
+router.get("/systeminfo/", async (req, res) => {
+	try {
+		let readResult = await redisJSON.read('systemInfo');
+		return res.status(200).json({ success: true, data: readResult });
+	}
+	catch (error) {
+		return res.status(500).json({ success: false, error: error });
+	}
+});
+
 // reset flag
 router.post("/reset/", async (req, res) => {
 	try {

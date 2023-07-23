@@ -114,4 +114,38 @@ console.log('Setup Started');
 			console.error(error)
 		}			
 	}
+	// Check if usage JSON exists
+	let systemInfoExists = await redisJSON.exists('systemInfo');
+	if (systemInfoExists.data === 0) {
+		process.stdout.write('Creating systemInfo...');
+		try {
+			// Create Blank systemInfo JSON
+			let systemInfo = {
+				version: "",
+				ipAddress: "",
+				serial_number: "",
+				total_memory: 0,
+				available_memory: 0,
+				used_memory: 0,
+				free_memory: 0,
+				memory_percent: 0,
+				memory_unit: "",
+				total_disk: 0,
+				used_disk: 0,
+				free_disk: 0,
+				disk_percent: 0,
+				disk_unit: "",
+				cpu_percent: 0,
+				cpu_unit: "",
+				ip_address: "",
+				mac_address: "",
+				timestamp: 0
+			}
+			redisJSON.create('systemInfo', systemInfo);
+			process.stdout.write('SUCCESS\n');
+		} catch (error) {
+			process.stdout.write('ERROR\n');
+			console.error(error)
+		}			
+	}	
 })();

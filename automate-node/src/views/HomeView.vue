@@ -2,9 +2,33 @@
   <div class="bg-grey-lighten-2 full-width pa-10">
     <div class="d-flex align-center">
 		<div><v-img :src="logo" width="250" /></div>
-		<div class="ml-5">Contacts Normally Closed <br /> Version {{  version }}</div>
+		<div class="ml-5">Contacts Normally Closed <br /> App Version {{  version }}</div>
 	</div>
-	
+	<table class="my-5" width="100%">
+		<tr>
+			<td width="10%" class="pa-1 text-body-2 font-weight-bold">Serial Number</td>
+			<td width="10%" class="pa-1 text-body-2 font-weight-bold">Server Version</td>
+			<td width="10%" class="pa-1 text-body-2 font-weight-bold">Used Memory</td>
+			<td width="10%" class="pa-1 text-body-2 font-weight-bold">Used Disk</td>
+			<td width="10%" class="pa-1 text-body-2 font-weight-bold">Used CPU</td>
+			<td width="10%" class="pa-1 text-body-2 font-weight-bold">IP Address</td>
+			<td width="10%" class="pa-1 text-body-2 font-weight-bold">MAC Address</td>
+			<td width="10%" class="pa-1 text-body-2 font-weight-bold">Updated</td>
+		</tr>
+		<tr>
+			<td class="px-1 text-body-2">{{ systemInfo.serial_number }}</td>
+			<td class="px-1 text-body-2">{{ systemInfo.version }}</td>
+			<td class="px-1 text-body-2">{{ (systemInfo.used_memory / (1024 ** 3)).toFixed(2) }} / {{ (systemInfo.total_memory / (1024 ** 3)).toFixed(2) }} GB ({{ systemInfo.memory_percent }} %)</td>
+			<td class="px-1 text-body-2">{{ (systemInfo.used_disk / (1024 ** 3)).toFixed(2) }} / {{ (systemInfo.total_disk / (1024 ** 3)).toFixed(2) }} GB ({{ systemInfo.disk_percent }} %)</td>
+			<td class="px-1 text-body-2">{{ systemInfo.cpu_percent }}%</td>
+			<td class="px-1 text-body-2">{{ systemInfo.ip_address }}</td>
+			<td class="px-1 text-body-2">{{ systemInfo.mac_address }}</td>
+			<td class="px-1 text-body-2">{{ dayjs(systemInfo.timestamp, 'x').format('DD-MMM-YYYY | HH:mm:ss') }}</td>
+			
+			
+			
+		</tr>
+	</table>
     <div style="display: grid; grid-template-columns: repeat(auto-fill, 600px); grid-gap: 20px">
 		<div class="bg-white rounded-lg pa-5" v-for="index in 7" :key="index">
 			<div class="" style="display: grid; grid-template-columns: 1fr 1fr 1fr; grid-gap: 5px">
@@ -98,6 +122,27 @@ export default {
     message: 'hello',
 	resetMetersDialog: false,
     logo: logo,
+	systemInfo: {
+		version: "",
+		ipAddress: "",
+		serial_number: "",
+		total_memory: 0,
+		available_memory: 0,
+		used_memory: 0,
+		free_memory: 0,
+		memory_percent: 0,
+		memory_unit: "",
+		total_disk: 0,
+		used_disk: 0,
+		free_disk: 0,
+		disk_percent: 0,
+		disk_unit: "",
+		cpu_percent: 0,
+		cpu_unit: "",
+		ip_address: "",
+		mac_address: "",
+		timestamp: 0
+	},
     allRelays: false,
     relays: {
       1: false,
@@ -141,6 +186,11 @@ export default {
       let loadResult = await this.axios.get('/api/v1/load')
       this.load = loadResult.data.data.data
     },
+	async getSystemInfo() {
+		let systemInfoResult = await this.axios.get('/api/v1/systemInfo');
+		this.systemInfo = systemInfoResult.data.data.data
+		// console.log(JSON.stringify(systemInfoResult.data.data.data, null, 2))
+	},
     async getUsage() {
       let usageResult = await this.axios.get('/api/v1/usage')
       this.usage = usageResult.data.data.data
@@ -256,9 +306,11 @@ export default {
     this.getLoad();
 	this.getUsage();
 	this.getAutomation();
+	this.getSystemInfo();
     setInterval(() => {
       this.getLoad()
 	  this.getUsage()
+	  this.getSystemInfo();
     }, 1000)
   }
 }
