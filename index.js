@@ -97,6 +97,9 @@ const startup = async () => {
 		let redisClient = await redisConnect.connect();
 		global.redisClient = redisClient;
 		await require(global.approute + '/setup.js')
+		// Update System Info Version
+		let sysInfo = await redisJSON.update('systemInfo', { version: package.version })
+		console.log('sysInfo = ' + JSON.stringify(sysInfo, null, 2))
 	}
 	catch (error) {
 		console.error(error)
@@ -133,35 +136,11 @@ const startup = async () => {
 }
 
 const sendHeartbeat = async () => {
-	const namedPipeInPath = '/hostin';
-	const namedPipeOutPath = '/hostout';
-	const commandToSend = ' python /home/pi/automate-node/system-info.py ';
-
-	// Sending data to the named pipe '/home/pi/hostin'
-	const writableStream = await fs.createWriteStream(namedPipeInPath);
-	writableStream.write(commandToSend, (err) => {
-	  if (err) {
-	    console.error('Error writing to the named pipe:', err);
-	  }
-	  writableStream.end();
-	});
-
-	// Listening for data from the named pipe '/home/pi/hostout'
-	const readableStream = await fs.createReadStream(namedPipeOutPath);
-	readableStream.on('data', async (data) => {
-		let heartbeat = {
-			version: package.version,
-			ipAddress: global.ip,
-			...JSON.parse(data.toString()),
-			timestamp: datetime.formatDateTimeNow('valueOf'),
-		}
-		// console.log(heartbeat);
-		await redisJSON.update('systemInfo', heartbeat);
-		await mosquittoConnect.publish('node/' + global.nodeId + '/heartbeat', heartbeat);
-	});
-	readableStream.on('error', (err) => {
-	  console.error('Error reading from the named pipe:', err);
-	});
+	let systemInfo = await redisJSON.read('systemInfo')
+	let heartbeat = systemInfo.data;
+	// console.log(heartbeat)
+	await mosquittoConnect.publish('node/' + global.nodeId + '/heartbeat', heartbeat);
+	// console.log('heartbeatResult = ' + JSON.stringify(heartbeatResult, null, 2))
 }
  
 

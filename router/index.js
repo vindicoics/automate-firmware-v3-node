@@ -72,6 +72,18 @@ router.get("/systeminfo/", async (req, res) => {
 		return res.status(500).json({ success: false, error: error });
 	}
 });
+// update system info
+router.post("/systeminfo/", async (req, res) => {
+	try {
+		let systemInfo = req.body;
+		console.log('systemInfo = ' + JSON.stringify(systemInfo, null, 2))
+		let updateResult = await redisJSON.update('systemInfo', systemInfo);
+		return res.status(200).json({ success: true, data: updateResult });
+	}
+	catch (error) {
+		return res.status(500).json({ success: false, error: error })
+	}
+})
 
 // reset flag
 router.post("/reset/", async (req, res) => {

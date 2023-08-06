@@ -9,5 +9,7 @@ echo ${HOST_IP}
 # # Export the host IP address as an environment variable
 # export HOST_IP
 
+sudo docker image prune -f
+
 # # Run docker-compose with the provided IP address
 sudo HOST_IP=$HOST_IP docker-compose up -d
