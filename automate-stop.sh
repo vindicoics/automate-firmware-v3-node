@@ -1,1 +1,1 @@
-sudo docker-compose stop
+sudo docker-compose -f /home/pi/automate-node/docker-compose.yaml stop automate-node

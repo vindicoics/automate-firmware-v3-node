@@ -8,6 +8,9 @@ const app = express();
 app.use(cors());
 const port = process.env.WEB_PORT;
 
+// Require Axios
+const axios = require('axios');
+
 // Require package.json
 const package = require('./package.json');
 
@@ -48,32 +51,12 @@ const startup = async () => {
     try {
 		// Get IP and Serial Number of device
 		if (process.env.NODE_ENV === 'production') {
-			const ip = require('ip4');
-			global.ip = ip
-			const hostIp = process.env.HOST_IP
-			console.log(`Host IP: ${hostIp}`);
-
-			// Get Docker Host IP
-			// const dockerHostIp = require('docker-host-ip');
-			// dockerHostIp( (error, result) => {
-			// 	if (error) {
-			// 		console.error(error);
-			// 	} else {
-			// 		global.ip = result;
-			// 	}
-			// });
 			var rsn = require('raspi-serial-number');
 			global.nodeId = await rsn.getSerialNumber();
 		} else if (process.env.NODE_ENV === 'staging') {
-			// Get Local IP
-			const ip = require('ip4');
-			global.ip = ip
 			var rsn = require('raspi-serial-number');
 			global.nodeId = await rsn.getSerialNumber();
 		} else {
-			// Get Local IP
-			const ip = require('ip4');
-			global.ip = ip
 			global.nodeId = "1000000000999999";
 		}
 		// Set Status
@@ -86,7 +69,6 @@ const startup = async () => {
 			REDIS_PORT: process.env.REDIS_PORT,
 			MOSQUITO_HOST: process.env.MOSQUITTO_HOST,
 			MOSQUITTO_PORT: process.env.MOSQUITTO_PORT,
-			IP_ADDRESS: global.ip,
 			NODE_ID: global.nodeId
 		}
 	} catch (err) {
@@ -97,9 +79,6 @@ const startup = async () => {
 		let redisClient = await redisConnect.connect();
 		global.redisClient = redisClient;
 		await require(global.approute + '/setup.js')
-		// Update System Info Version
-		let sysInfo = await redisJSON.update('systemInfo', { version: package.version })
-		console.log('sysInfo = ' + JSON.stringify(sysInfo, null, 2))
 	}
 	catch (error) {
 		console.error(error)
@@ -136,8 +115,21 @@ const startup = async () => {
 }
 
 const sendHeartbeat = async () => {
-	let systemInfo = await redisJSON.read('systemInfo')
-	let heartbeat = systemInfo.data;
+	// Get systeminfo from localhost:8086
+	var systemInfo
+	if (process.env.NODE_ENV === 'production') {
+		systemInfo = await axios.get('http://host.docker.internal:8086/systeminfo')
+	} else {
+		systemInfo = await axios.get('http://localhost:8086/systeminfo')
+	}
+	// let systemInfo = await redisJSON.read('systemInfo')
+	let heartbeat = systemInfo.data.data;
+	heartbeat.version = package.version;
+
+	// Update System Info Version
+	await redisJSON.update('systemInfo', heartbeat)
+	console.log(heartbeat)
+
 	// console.log(heartbeat)
 	await mosquittoConnect.publish('node/' + global.nodeId + '/heartbeat', heartbeat);
 	// console.log('heartbeatResult = ' + JSON.stringify(heartbeatResult, null, 2))

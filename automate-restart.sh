@@ -1,3 +1,1 @@
-#!/bin/bash
-sh automate-stop.sh
-sh automate-start.sh
+sudo docker-compose up -f /home/pi/automate-node/docker-compose.yaml restart automate-node

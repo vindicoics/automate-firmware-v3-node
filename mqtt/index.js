@@ -20,11 +20,12 @@ global.mqttClient.on("message", async (topic, message) => {
 				data = JSON.parse(message);	
 				if (data !== undefined) {
 					// TODO - NEED TO ADD THIS TO THE DATABASE via SETUP.JS
-					let mqttService = await redisConnect.readString('mqttService');
-					if (mqttService == 1) {
-						let result = await relay.write(topicSplit[3], data)
-						console.log(result.message)
-					}
+					// let mqttService = await redisConnect.readString('mqttService');
+					// if (mqttService == 1) {
+						// console.log(topicSplit[3])
+						await relay.write(topicSplit[3], data)
+						// console.log(result.message)
+					// }
 				}
 			default:
 				break;

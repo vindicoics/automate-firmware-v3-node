@@ -27,9 +27,10 @@ services:
       - WEB_PORT=8085
       - REDIS_HOST=redis://redis
       - REDIS_PORT=6379
-      - HOST_IP=${HOST_IP}
       - MOSQUITTO_HOST=mqtt://192.168.88.254
       - MOSQUITTO_PORT=1883
       - MOSQUITTO_USERNAME=
       - MOSQUITTO_PASSWORD=
       - MOSQUITTO_AUTH=false
+    extra_hosts:
+    - "host.docker.internal:host-gateway"

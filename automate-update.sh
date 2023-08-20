@@ -1,2 +1,2 @@
-sudo docker pull vindico/automate-node:latest
+sudo docker-compose pull automate-node
 sudo docker images prune

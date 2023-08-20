@@ -163,8 +163,27 @@ const mosquittoConnect = require(global.approute + '/lib/mosquitto-connect/index
 				await redisJSON.update('latestUsage', usage);
 				await redisJSON.update('latestPowerSum', powerSum);
 
-				let latestRelay = await redisJSON.read('latestRelay');
-				let relay = latestRelay.data;
+				// get all relay straings from redis
+				let S1 = await redisConnect.readString('S1');
+				let S2 = await redisConnect.readString('S2');
+				let S3 = await redisConnect.readString('S3');
+				let S4 = await redisConnect.readString('S4');
+				let S5 = await redisConnect.readString('S5');
+				let S6 = await redisConnect.readString('S6');
+				let S7 = await redisConnect.readString('S7');
+
+				let relay = {
+					S1: parseInt(S1),
+					S2: parseInt(S2),
+					S3: parseInt(S3),
+					S4: parseInt(S4),
+					S5: parseInt(S5),
+					S6: parseInt(S6),
+					S7: parseInt(S7),
+					timestamp: now
+				}
+				console.log(relay)
+
 				delete load.timestamp;
 				delete usage.timestamp;
 				delete powerSum.timestamp;
@@ -270,8 +289,27 @@ const mosquittoConnect = require(global.approute + '/lib/mosquitto-connect/index
 				await redisJSON.update('latestUsage', usage);
 				await redisJSON.update('latestPowerSum', powerSum);
 				
-				let latestRelay = await redisJSON.read('latestRelay');
-				let relay = latestRelay.data;
+				// get all relay straings from redis
+				let S1 = await redisConnect.readString('S1');
+				let S2 = await redisConnect.readString('S2');
+				let S3 = await redisConnect.readString('S3');
+				let S4 = await redisConnect.readString('S4');
+				let S5 = await redisConnect.readString('S5');
+				let S6 = await redisConnect.readString('S6');
+				let S7 = await redisConnect.readString('S7');
+
+				let relay = {
+					S1: parseInt(S1),
+					S2: parseInt(S2),
+					S3: parseInt(S3),
+					S4: parseInt(S4),
+					S5: parseInt(S5),
+					S6: parseInt(S6),
+					S7: parseInt(S7),
+					timestamp: now
+				}
+				console.log(relay)
+
 				delete load.timestamp;
 				delete usage.timestamp;
 				delete powerSum.timestamp;

@@ -1,6 +1,8 @@
 const { exec } = require("child_process");
 const dayjs = require("dayjs")
 const redisJSON = require("./lib/redis-json/index.js")
+const redisConnect = require("./lib/redis-connect/index.js")
+
 // Write to All Relays
 module.exports.writeAll = (value) => {
 	return new Promise((resolve, reject) => {
@@ -49,11 +51,11 @@ module.exports.write = (channel, value) => {
 							if (stderr) console.error(`stderr: ${stderr}`);
 						});
 					}
-					let relay = { 
-						[`S${channel}`]: parseInt(value),
-						timestamp: dayjs().valueOf()
-					};
-					await redisJSON.update('latestRelay', relay);
+					// let relay = { 
+					// 	[`S${channel}`]: parseInt(value),
+					// 	timestamp: dayjs().valueOf()
+					// };
+					await redisConnect.createString(`S${channel}`, parseInt(value));
 					resolve ({status: "success", data: null, message: `Relay ${channel} set to ${value}` });
 				}
 			})();

@@ -76,7 +76,7 @@ router.get("/systeminfo/", async (req, res) => {
 router.post("/systeminfo/", async (req, res) => {
 	try {
 		let systemInfo = req.body;
-		console.log('systemInfo = ' + JSON.stringify(systemInfo, null, 2))
+		// console.log('systemInfo = ' + JSON.stringify(systemInfo, null, 2))
 		let updateResult = await redisJSON.update('systemInfo', systemInfo);
 		return res.status(200).json({ success: true, data: updateResult });
 	}
