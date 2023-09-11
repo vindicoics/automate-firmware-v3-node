@@ -128,7 +128,7 @@ const sendHeartbeat = async () => {
 
 	// Update System Info Version
 	await redisJSON.update('systemInfo', heartbeat)
-	console.log(heartbeat)
+	// console.log(heartbeat)
 
 	// console.log(heartbeat)
 	await mosquittoConnect.publish('node/' + global.nodeId + '/heartbeat', heartbeat);

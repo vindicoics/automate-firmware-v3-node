@@ -182,7 +182,7 @@ const mosquittoConnect = require(global.approute + '/lib/mosquitto-connect/index
 					S7: parseInt(S7),
 					timestamp: now
 				}
-				console.log(relay)
+				// console.log(relay)
 
 				delete load.timestamp;
 				delete usage.timestamp;
@@ -308,7 +308,7 @@ const mosquittoConnect = require(global.approute + '/lib/mosquitto-connect/index
 					S7: parseInt(S7),
 					timestamp: now
 				}
-				console.log(relay)
+				// console.log(relay)
 
 				delete load.timestamp;
 				delete usage.timestamp;
