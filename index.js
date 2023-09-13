@@ -47,42 +47,35 @@ const fs = require('fs');
 
 let status = {}
 
+
+
 const startup = async () => {
-    try {
-		// Get IP and Serial Number of device
-		if (process.env.NODE_ENV === 'production') {
-			var rsn = require('raspi-serial-number');
-			global.nodeId = await rsn.getSerialNumber();
-		} else if (process.env.NODE_ENV === 'staging') {
-			var rsn = require('raspi-serial-number');
-			global.nodeId = await rsn.getSerialNumber();
-		} else {
-			global.nodeId = "1000000000999999";
-		}
-		// Set Status
-		status = {
-			ENVIRONMENT: process.env.NODE_ENV,
-			NAME: package.name,
-			VERSION: package.version,
-			WEB_PORT: process.env.WEB_PORT,
-			REDIS_HOST: process.env.REDIS_HOST,
-			REDIS_PORT: process.env.REDIS_PORT,
-			MOSQUITO_HOST: process.env.MOSQUITTO_HOST,
-			MOSQUITTO_PORT: process.env.MOSQUITTO_PORT,
-			NODE_ID: global.nodeId
-		}
-	} catch (err) {
-        console.error(err);
-    }
-	try {
-		// Connect to Redis
-		let redisClient = await redisConnect.connect();
-		global.redisClient = redisClient;
-		await require(global.approute + '/setup.js')
+	// Get IP and Serial Number of device
+	if (process.env.NODE_ENV === 'production') {
+		var rsn = require('raspi-serial-number');
+		global.nodeId = await rsn.getSerialNumber();
+	} else if (process.env.NODE_ENV === 'staging') {
+		var rsn = require('raspi-serial-number');
+		global.nodeId = await rsn.getSerialNumber();
+	} else {
+		global.nodeId = "1000000000999999";
 	}
-	catch (error) {
-		console.error(error)
+	// Set Status
+	status = {
+		ENVIRONMENT: process.env.NODE_ENV,
+		NAME: package.name,
+		VERSION: package.version,
+		WEB_PORT: process.env.WEB_PORT,
+		REDIS_HOST: process.env.REDIS_HOST,
+		REDIS_PORT: process.env.REDIS_PORT,
+		MOSQUITO_HOST: process.env.MOSQUITTO_HOST,
+		MOSQUITTO_PORT: process.env.MOSQUITTO_PORT,
+		NODE_ID: global.nodeId
 	}
+	// Connect to Redis Local
+	let redisClient = await redisConnect.connect();
+	global.redisClient = redisClient;
+	await require(global.approute + '/setup.js')
 	try {
 		// Connect to Mosquitto
 		const mqttClient = await mosquittoConnect.connect();		
@@ -96,20 +89,10 @@ const startup = async () => {
 	catch (error) {
 		console.error(error)
 	}
-	try {
-		// Launch Meter
-		require(global.approute + '/meter.js');
-	}
-	catch (error) {
-		console.error(error)
-	}
-	try {
-		// Launch Relay
-		require(global.approute + '/relay.js');
-	}
-	catch (error) {
-		console.error(error)
-	}
+	// Launch Meter
+	require(global.approute + '/meter.js');
+	// Launch Relay
+	require(global.approute + '/relay.js');
 	app.emit('ready');
    
 }

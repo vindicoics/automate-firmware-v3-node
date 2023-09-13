@@ -10,27 +10,27 @@ services:
       - "6379:6379"
     command: redis-stack-server /usr/local/etc/redis/redis.conf
     restart: always
-  automate-node:
-    image: vindico/automate-node:latest
-    devices:  
-      - "/dev/i2c-1:/dev/i2c-1"
-      - "/dev/ttyAMA0:/dev/ttyAMA0"
-    ports:
-      - "8085:8085"
-    depends_on:
-      - redis
-    links:
-      - redis
-    restart: always
-    environment:
-      - NODE_ENV=production
-      - WEB_PORT=8085
-      - REDIS_HOST=redis://redis
-      - REDIS_PORT=6379
-      - MOSQUITTO_HOST=mqtt://192.168.88.254
-      - MOSQUITTO_PORT=1883
-      - MOSQUITTO_USERNAME=
-      - MOSQUITTO_PASSWORD=
-      - MOSQUITTO_AUTH=false
-    extra_hosts:
-    - "host.docker.internal:host-gateway"
+  # automate-node:
+  #   image: vindico/automate-node:latest
+  #   devices:  
+  #     - "/dev/i2c-1:/dev/i2c-1"
+  #     - "/dev/ttyAMA0:/dev/ttyAMA0"
+  #   ports:
+  #     - "8085:8085"
+  #   depends_on:
+  #     - redis
+  #   links:
+  #     - redis
+  #   restart: always
+  #   environment:
+  #     - NODE_ENV=production
+  #     - WEB_PORT=8085
+  #     - REDIS_HOST=redis://redis
+  #     - REDIS_PORT=6379
+  #     - MOSQUITTO_HOST=mqtt://192.168.88.254
+  #     - MOSQUITTO_PORT=1883
+  #     - MOSQUITTO_USERNAME=
+  #     - MOSQUITTO_PASSWORD=
+  #     - MOSQUITTO_AUTH=false
+  #   extra_hosts:
+  #   - "host.docker.internal:host-gateway"
