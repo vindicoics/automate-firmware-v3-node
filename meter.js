@@ -97,14 +97,15 @@ const mosquittoConnect = require(global.approute + '/lib/mosquitto-connect/index
 				now = datetime.formatDateTimeNow('valueOf')
 				// Create an array of the data
 				const Z = line.split(' ');
+				const ignoreValue = 10; // Changed from 2 to 10
 				load = {
-					S1: Math.abs(Z[1]) > 2 ? Math.abs(Z[1]) : 0,
-					S2: Math.abs(Z[2]) > 2 ? Math.abs(Z[2]) : 0,
-					S3: Math.abs(Z[3]) > 2 ? Math.abs(Z[3]) : 0,
-					S4: Math.abs(Z[4]) > 2 ? Math.abs(Z[4]) : 0,
-					S5: Math.abs(Z[5]) > 2 ? Math.abs(Z[5]) : 0,
-					S6: Math.abs(Z[6]) > 2 ? Math.abs(Z[6]) : 0,
-					S7: Math.abs(Z[7]) > 2 ? Math.abs(Z[7]) : 0,
+					S1: Math.abs(Z[1]) > ignoreValue ? Math.abs(Z[1]) : 0,
+					S2: Math.abs(Z[2]) > ignoreValue ? Math.abs(Z[2]) : 0,
+					S3: Math.abs(Z[3]) > ignoreValue ? Math.abs(Z[3]) : 0,
+					S4: Math.abs(Z[4]) > ignoreValue ? Math.abs(Z[4]) : 0,
+					S5: Math.abs(Z[5]) > ignoreValue ? Math.abs(Z[5]) : 0,
+					S6: Math.abs(Z[6]) > ignoreValue ? Math.abs(Z[6]) : 0,
+					S7: Math.abs(Z[7]) > ignoreValue ? Math.abs(Z[7]) : 0,
 					total: 0,
 					unit: 'W',
 					timestamp: now
