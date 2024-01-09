@@ -1,6 +1,6 @@
 {
   "name": "automate-firmware-v3-node",
-  "version": "1.0.15",
+  "version": "1.0.999",
   "description": "",
   "main": "server.js",
   "scripts": {
