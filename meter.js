@@ -58,7 +58,7 @@ const mosquittoConnect = require(global.approute + '/lib/mosquitto-connect/index
 		let load = {};
 		let now = datetime.formatDateTimeNow('valueOf')		
 
-		// Poling Interval is 0.5 seconds
+		// Poling Interval is 2 seconds
 		const timeDuration = 2 / 3600;
 		if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging') {
 			// Connect to Serial Port
