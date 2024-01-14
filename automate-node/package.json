@@ -1,6 +1,6 @@
 {
   "name": "automate-node",
-  "version": "1.0.4",
+  "version": "1.0.16",
   "private": true,
   "scripts": {
     "dev": "vite",
