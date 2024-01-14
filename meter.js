@@ -59,7 +59,7 @@ const mosquittoConnect = require(global.approute + '/lib/mosquitto-connect/index
 		let now = datetime.formatDateTimeNow('valueOf')		
 
 		// Poling Interval is 0.5 seconds
-		const timeDuration = 0.5 / 3600;
+		const timeDuration = 2 / 3600;
 		if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging') {
 			// Connect to Serial Port
 			const port = new SerialPort({
@@ -323,7 +323,7 @@ const mosquittoConnect = require(global.approute + '/lib/mosquitto-connect/index
 				payload.timestamp = now;
 				// Send to Automate Controller (MQTT Server)
 				mosquittoConnect.publish(`node/${global.nodeId}/data/`, payload);
-			}, 500);
+			}, 2000);
 		}	
 	} catch (error) {
 		console.error(error);
